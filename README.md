@@ -78,8 +78,8 @@ Open [http://localhost:4200](http://localhost:4200) in your browser.
 ### Production Build
 
 ```bash
-# Build for production
-ng build --configuration production --base-href /
+# Build for GitHub Pages
+npm run build:pages
 
 # The build artifacts will be in dist/popaurastream/browser/
 ```
@@ -202,10 +202,10 @@ The footer reads from `/api/visitors` when the Node SSR server is running. The e
 
 ```bash
 # Build for GitHub Pages
-ng build --configuration production --base-href /
+npm run build:pages
 
 # Deploy using angular-cli-ghpages
-npx angular-cli-ghpages --dir=dist/popaurastream/browser
+npm run deploy:pages
 ```
 
 ---

@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:pages": "ng build --base-href /Movie-and-season-streaming-website/",
+    "deploy:pages": "npm run build:pages && angular-cli-ghpages --dir=dist/popaurastream/browser --branch=gh-pages",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:popaurastream": "node dist/popaurastream/server/server.mjs"
