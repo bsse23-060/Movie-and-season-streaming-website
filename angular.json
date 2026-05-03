@@ -21,12 +21,7 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "CNAME",
-                "input": "public",
-                "output": "/"
-              }
+              "src/assets"
             ],
             "styles": [
               "src/styles.css"
