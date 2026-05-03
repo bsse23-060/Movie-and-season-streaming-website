@@ -45,7 +45,7 @@
         <i class="fas fa-film"></i>
       </div>
       <h3 class="welcome-title">Welcome to AuraBot!</h3>
-      <p class="welcome-text">I can help you discover movies, get recommendations, and find information about your favorite films.</p>
+      <p class="welcome-text">I can help you discover movies, season picks, TV shows, and details about your favorite films.</p>
       
       <!-- Quick Actions -->
       <div class="quick-actions">
@@ -96,7 +96,7 @@
       <input 
         type="text" 
         class="chat-input" 
-        placeholder="Ask about movies..."
+        placeholder="Ask about movies or seasons..."
         [(ngModel)]="userMessage"
         (keydown)="onKeyDown($event)"
         [disabled]="isLoading"

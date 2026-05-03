@@ -25,7 +25,7 @@ export class ChatbotComponent implements OnInit {
   
   readonly quickActions = [
     { label: 'Recommend a movie', message: 'Can you recommend a good movie to watch tonight?' },
-    { label: 'Popular this week', message: 'What are the most popular movies this week?' },
+    { label: 'Season picks', message: 'Suggest some popular seasons or TV shows to binge-watch' },
     { label: 'Action movies', message: 'Suggest some exciting action movies' },
     { label: 'Help', message: 'What can you help me with?' }
   ];

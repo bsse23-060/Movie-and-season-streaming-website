@@ -80,6 +80,13 @@ export class TMDBService {
     );
   }
 
+  // Discover TV shows by genre (10759=Action & Adventure, 35=Comedy, 18=Drama, 10765=Sci-Fi & Fantasy)
+  discoverTvByGenre(genreId: number, page = 1) {
+    return this.http.get(
+      `${environment.tmdbBaseUrl}/discover/tv?api_key=${environment.tmdbApiKey}&with_genres=${genreId}&sort_by=popularity.desc&page=${page}`
+    );
+  }
+
   // Get now playing movies
   getNowPlayingMovies(page = 1) {
     return this.http.get(
