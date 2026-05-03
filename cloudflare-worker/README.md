@@ -1,6 +1,8 @@
-# PopAuraStream Chatbot - Cloudflare Worker
+# PopAuraStream Chatbot - Optional Cloudflare Worker
 
-This folder contains the Cloudflare Worker that proxies requests to the Gemini API for the AuraBot movie assistant.
+This folder contains an optional Cloudflare Worker template that can proxy requests to the Gemini API.
+
+The deployed PopAuraStream GitHub Pages site does not require this worker. AuraBot currently works directly in the Angular app with TMDB-powered recommendations and lookups.
 
 ## Deployment Instructions
 
@@ -40,10 +42,11 @@ This folder contains the Cloudflare Worker that proxies requests to the Gemini A
 
 ## Configuration
 
-After deploying, update the `WORKER_URL` in `src/app/core/services/chatbot.service.ts` to match your worker URL:
+After deploying, you would need to wire your Angular app back to the worker endpoint if you want Gemini-powered responses:
 
 ```typescript
-private readonly WORKER_URL = 'https://popaurastream-chatbot.<your-subdomain>.workers.dev';
+// Example endpoint:
+// https://popaurastream-chatbot.<your-subdomain>.workers.dev
 ```
 
 ## Security Notes

@@ -8,7 +8,7 @@
 
 [![Angular](https://img.shields.io/badge/Angular-19-dd0031?style=flat-square&logo=angular)](https://angular.io/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-f38020?style=flat-square&logo=cloudflare)](https://workers.cloudflare.com/)
+[![TMDB](https://img.shields.io/badge/TMDB-Powered-01b4e4?style=flat-square&logo=themoviedatabase)](https://www.themoviedb.org/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 [Live Demo](https://example.com) • [Report Bug](https://github.com/) • [Request Feature](https://github.com/)
@@ -29,7 +29,7 @@
 - **Movie Recommendations** - Get personalized suggestions based on your mood or preferences
 - **Cast & Crew Info** - Ask about actors, directors, and filmographies
 - **Movie Details** - Get quick info about any movie or TV show
-- **Powered by Gemini AI** - Intelligent responses via Cloudflare Workers proxy
+- **TMDB-powered assistant** - Fast recommendations and lookups that work on GitHub Pages
 
 ### 📚 Personal Library
 - **Custom Lists** - Create and manage custom movie lists
@@ -110,7 +110,7 @@ src/
 ├── environments/                # Environment configurations
 └── styles.css                   # Global styles
 
-cloudflare-worker/               # Cloudflare Worker for AI chatbot
+cloudflare-worker/               # Optional Cloudflare Worker template
 ├── worker.js                    # Worker script
 ├── wrangler.toml               # Wrangler configuration
 └── README.md                   # Deployment instructions
@@ -120,9 +120,11 @@ cloudflare-worker/               # Cloudflare Worker for AI chatbot
 
 ## 🤖 AuraBot Setup
 
-AuraBot uses a Cloudflare Worker to securely proxy requests to Google's Gemini AI.
+AuraBot works directly from the deployed GitHub Pages app by using TMDB-powered recommendations and search responses.
 
-### Cloudflare Worker Deployment
+The `cloudflare-worker/` folder is kept as an optional starting point if you later want to connect a Gemini API proxy.
+
+### Optional Cloudflare Worker Template
 
 ```bash
 # Navigate to worker directory
@@ -138,15 +140,8 @@ wrangler login
 wrangler deploy
 ```
 
-The worker will be deployed to: `https://popaurastream-chatbot.<your-subdomain>.workers.dev`
-
-### Configuration
-
-Update the worker URL in `src/app/core/services/chatbot.service.ts`:
-
-```typescript
-private readonly WORKER_URL = 'https://popaurastream-chatbot.your-subdomain.workers.dev';
-```
+The worker template will be deployed to: `https://popaurastream-chatbot.<your-subdomain>.workers.dev`.
+It is not required for the current GitHub Pages deployment.
 
 ---
 
@@ -171,7 +166,7 @@ PopAuraStream is fully optimized for mobile devices:
 | Fonts | Syncopate, Elm Sans |
 | Icons | Font Awesome 6 |
 | API | TMDB (The Movie Database) |
-| AI | Google Gemini via Cloudflare Workers |
+| Assistant | TMDB-powered AuraBot |
 | Visitor Count | Express API with cookie/local fallback |
 | Hosting | GitHub Pages / Node SSR |
 
@@ -231,8 +226,7 @@ This project is licensed under the MIT License.
 ## 🙏 Acknowledgments
 
 - [TMDB](https://www.themoviedb.org/) for the movie database API
-- [Google Gemini](https://deepmind.google/technologies/gemini/) for AI capabilities
-- [Cloudflare Workers](https://workers.cloudflare.com/) for serverless infrastructure
+- [Cloudflare Workers](https://workers.cloudflare.com/) for the optional worker template
 - [Angular](https://angular.io/) for the awesome framework
 
 ---
