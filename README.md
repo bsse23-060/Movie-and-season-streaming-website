@@ -1,5 +1,5 @@
 # 🎬 PopAuraStream
-
+https://bsse23-060.github.io/Movie-and-season-streaming-website/search
 <div align="center">
 
 ![PopAuraStream Logo](https://img.shields.io/badge/PopAuraStream-Streaming%20Companion-00c67a?style=for-the-badge&logo=film&logoColor=white)
@@ -233,7 +233,7 @@ This project is licensed under the MIT License.
 
 <div align="center">
 
-Made with ❤️ by [bsse23094](https://github.com/bsse23094)
+Made with ❤️ by [bsse23094](https://github.com/bsse23-060)
 
 ⭐ Star this repo if you find it useful!
 
