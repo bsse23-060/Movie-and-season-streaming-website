@@ -177,7 +177,7 @@ PopAuraStream is fully optimized for mobile devices:
 
 ### Visitor Counter
 
-The footer reads from `/api/visitors` when the Node SSR server is running. The endpoint stores the total in `visitor-count.json` and uses a first-party cookie so each browser is counted once. Static-only hosting falls back to a local browser count.
+The footer reads from `/api/visitors` when the Node SSR server is running. The endpoint stores the total in `visitor-count.json` and uses a first-party cookie so each browser is counted once. On GitHub Pages, the app falls back to a hosted visitor-counter API so the deployed static site can still show a shared total.
 
 ---
 
