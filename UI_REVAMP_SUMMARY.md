@@ -98,7 +98,7 @@ Successfully revamped the Cinetex streaming platform UI to match modern streamin
 --bg-primary: #0f0f0f
 --bg-secondary: #141414
 --bg-card: #1a1a1a
---accent: #e50914 (Cinetex red)
+--accent: #e50914 (PopAuraStream accent)
 --accent-secondary: #ff9500 (Orange)
 --text-primary: #ffffff
 --text-secondary: #b3b3b3

@@ -24,11 +24,11 @@ export class ChatbotService {
   private tmdb = inject(TMDBService);
   
   // Cloudflare Worker endpoint - this proxies to Gemini API
-  private readonly WORKER_URL = 'https://cinetex-chatbot.bsse23094.workers.dev';
+  private readonly WORKER_URL = 'https://popaurastream-chatbot.bsse23094.workers.dev';
   
   private conversationHistory: ChatMessage[] = [];
   
-  private systemPrompt = `You are CineBot, a helpful movie and TV show assistant for Cinetex - a streaming companion app. 
+  private systemPrompt = `You are AuraBot, a helpful movie and TV show assistant for PopAuraStream - a streaming companion app. 
 Your capabilities:
 - Recommend movies and TV shows based on user preferences
 - Provide details about movies, cast, directors, and plots
@@ -100,7 +100,7 @@ Format movie titles in bold when mentioning them.`;
     }
     
     if (lowerQuery.includes('hello') || lowerQuery.includes('hi') || lowerQuery.includes('hey')) {
-      return "Hello! 👋 I'm CineBot, your movie companion. I can help you find movies, get info about actors, or suggest what to watch. What are you in the mood for today?";
+      return "Hello! I'm AuraBot, your movie companion. I can help you find movies, get info about actors, or suggest what to watch. What are you in the mood for today?";
     }
     
     if (lowerQuery.includes('help')) {

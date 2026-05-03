@@ -1,5 +1,5 @@
 /**
- * Cinetex Chatbot - Cloudflare Worker
+ * PopAuraStream Chatbot - Cloudflare Worker
  * Proxies requests to Gemini API for movie recommendations
  * 
  * IMPORTANT: The API key should be set as a secret in Cloudflare:

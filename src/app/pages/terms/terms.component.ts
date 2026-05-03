@@ -11,6 +11,6 @@ import { RouterModule } from '@angular/router';
 })
 export class TermsComponent {
   openRepo(): void {
-    try { window.open('https://github.com/bsse23094/cinetex_', '_blank'); } catch (e) { console.error(e); }
+    try { window.open('https://github.com/', '_blank'); } catch (e) { console.error(e); }
   }
 }

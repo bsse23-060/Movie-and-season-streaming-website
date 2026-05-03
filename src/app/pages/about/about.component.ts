@@ -12,6 +12,6 @@ import { RouterModule } from '@angular/router';
 
 export class AboutComponent {
   openRepo(): void {
-    window.open('https://github.com/bsse23094/cinetex_', '_blank');
+    window.open('https://github.com/', '_blank');
   }
 }

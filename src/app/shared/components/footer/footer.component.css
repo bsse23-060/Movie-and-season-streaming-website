@@ -73,6 +73,17 @@
     margin: 0;
 }
 
+.footer-visitor {
+    margin-top: 18px;
+    font-size: 14px;
+    color: #ddd;
+}
+
+.visitor-label {
+    color: #a0a0a0;
+    margin-right: 8px;
+}
+
 /* Footer Sections */
 .footer-section {
     /* Section styles */

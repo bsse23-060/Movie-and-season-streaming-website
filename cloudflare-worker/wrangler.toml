@@ -1,4 +1,4 @@
-name = "cinetex-chatbot"
+name = "popaurastream-chatbot"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 

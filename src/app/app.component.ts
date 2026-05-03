@@ -15,7 +15,7 @@ import { DarkVeilComponent } from './shared/components/dark-veil/dark-veil.compo
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-  title = 'cinetex';
+  title = 'PopAuraStream';
   isLoading = true;
   isScrolled = false;
   mobileMenuOpen = false;

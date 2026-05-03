@@ -1,8 +1,8 @@
-# 🎬 Cinetex
+# 🎬 PopAuraStream
 
 <div align="center">
 
-![Cinetex Logo](https://img.shields.io/badge/Cinetex-Streaming%20Companion-00c67a?style=for-the-badge&logo=film&logoColor=white)
+![PopAuraStream Logo](https://img.shields.io/badge/PopAuraStream-Streaming%20Companion-00c67a?style=for-the-badge&logo=film&logoColor=white)
 
 **Your modern streaming companion for movies, TV shows, and anime.**
 
@@ -11,7 +11,7 @@
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-f38020?style=flat-square&logo=cloudflare)](https://workers.cloudflare.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-[Live Demo](https://bsse23094.github.io/cinetex_/) • [Report Bug](https://github.com/bsse23094/cinetex_/issues) • [Request Feature](https://github.com/bsse23094/cinetex_/issues)
+[Live Demo](https://example.com) • [Report Bug](https://github.com/) • [Request Feature](https://github.com/)
 
 </div>
 
@@ -25,7 +25,7 @@
 - **Category Browsing** - Browse popular movies, TV shows, and anime
 - **Smart Filtering** - Filter by genre, year, and rating
 
-### 🤖 CineBot AI Assistant
+### 🤖 AuraBot AI Assistant
 - **Movie Recommendations** - Get personalized suggestions based on your mood or preferences
 - **Cast & Crew Info** - Ask about actors, directors, and filmographies
 - **Movie Details** - Get quick info about any movie or TV show
@@ -36,6 +36,7 @@
 - **Favorites** - Save your favorite movies and shows
 - **Ratings** - Rate movies and track what you've watched
 - **Watch Progress** - Resume where you left off
+- **Visitor Counter** - Track unique visits and show the live count in the footer
 
 ### 🎨 Modern Design
 - **Dark Theme** - Sleek, Netflix-inspired dark interface
@@ -46,7 +47,7 @@
 ### 🔒 Privacy-First
 - **No Accounts Required** - Start using immediately
 - **Local Storage Only** - All data stays on your device
-- **No Tracking** - Zero cookies, zero analytics
+- **Lightweight Visitor Count** - Uses one first-party visit flag only for the total counter
 - **Full Control** - Clear your data anytime
 
 ---
@@ -62,8 +63,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/bsse23094/cinetex_.git
-cd cinetex_
+git clone https://github.com/your-org/popaurastream.git
+cd popaurastream
 
 # Install dependencies
 npm install
@@ -78,9 +79,9 @@ Open [http://localhost:4200](http://localhost:4200) in your browser.
 
 ```bash
 # Build for production
-ng build --configuration production --base-href /cinetex_/
+ng build --configuration production --base-href /
 
-# The build artifacts will be in dist/cinetex/browser/
+# The build artifacts will be in dist/popaurastream/browser/
 ```
 
 ---
@@ -100,7 +101,7 @@ src/
 │   ├── pages/                   # Static pages (About, Privacy, Terms)
 │   └── shared/                  # Shared components and utilities
 │       ├── components/          # Reusable UI components
-│       │   ├── chatbot/         # CineBot AI assistant
+│       │   ├── chatbot/         # AuraBot AI assistant
 │       │   ├── footer/          # App footer
 │       │   ├── movie-card/      # Movie display card
 │       │   └── ...
@@ -117,9 +118,9 @@ cloudflare-worker/               # Cloudflare Worker for AI chatbot
 
 ---
 
-## 🤖 CineBot Setup
+## 🤖 AuraBot Setup
 
-CineBot uses a Cloudflare Worker to securely proxy requests to Google's Gemini AI.
+AuraBot uses a Cloudflare Worker to securely proxy requests to Google's Gemini AI.
 
 ### Cloudflare Worker Deployment
 
@@ -137,21 +138,21 @@ wrangler login
 wrangler deploy
 ```
 
-The worker will be deployed to: `https://cinetex-chatbot.<your-subdomain>.workers.dev`
+The worker will be deployed to: `https://popaurastream-chatbot.<your-subdomain>.workers.dev`
 
 ### Configuration
 
 Update the worker URL in `src/app/core/services/chatbot.service.ts`:
 
 ```typescript
-private readonly WORKER_URL = 'https://cinetex-chatbot.your-subdomain.workers.dev';
+private readonly WORKER_URL = 'https://popaurastream-chatbot.your-subdomain.workers.dev';
 ```
 
 ---
 
 ## 📱 Mobile Optimization
 
-Cinetex is fully optimized for mobile devices:
+PopAuraStream is fully optimized for mobile devices:
 
 - **Touch-friendly** - Large tap targets and swipe gestures
 - **Responsive Layout** - Adapts to any screen size
@@ -171,7 +172,12 @@ Cinetex is fully optimized for mobile devices:
 | Icons | Font Awesome 6 |
 | API | TMDB (The Movie Database) |
 | AI | Google Gemini via Cloudflare Workers |
-| Hosting | GitHub Pages |
+| Visitor Count | Express API with cookie/local fallback |
+| Hosting | GitHub Pages / Node SSR |
+
+### Visitor Counter
+
+The footer reads from `/api/visitors` when the Node SSR server is running. The endpoint stores the total in `visitor-count.json` and uses a first-party cookie so each browser is counted once. Static-only hosting falls back to a local browser count.
 
 ---
 
@@ -184,7 +190,7 @@ Cinetex is fully optimized for mobile devices:
 | **My Library** | Manage custom lists |
 | **Favorites** | View saved favorites |
 | **Rated** | View your rated movies |
-| **About** | Learn about Cinetex |
+| **About** | Learn about PopAuraStream |
 | **Privacy** | Privacy policy |
 | **Terms** | Terms of service |
 
@@ -196,10 +202,10 @@ Cinetex is fully optimized for mobile devices:
 
 ```bash
 # Build for GitHub Pages
-ng build --configuration production --base-href /cinetex_/
+ng build --configuration production --base-href /
 
 # Deploy using angular-cli-ghpages
-npx angular-cli-ghpages --dir=dist/cinetex/browser
+npx angular-cli-ghpages --dir=dist/popaurastream/browser
 ```
 
 ---

@@ -119,7 +119,7 @@ export class MoviePlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getProgressKey(): string {
-    return `cinetex_progress_${this.mediaType}_${this.movieId}`;
+    return `popaurastream_progress_${this.mediaType}_${this.movieId}`;
   }
 
   checkSavedProgress(): void {
