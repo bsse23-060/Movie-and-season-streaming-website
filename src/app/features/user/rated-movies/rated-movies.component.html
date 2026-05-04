@@ -7,35 +7,148 @@
       <div class="header-text">
         <h1 class="page-title">rated movies</h1>
         <p class="page-subtitle">
-          <span class="count">{{ ratedMovies.length }}</span> 
+          <span class="count">{{ ratedMovies.length }}</span>
           {{ ratedMovies.length === 1 ? 'rating' : 'ratings' }} in your collection
         </p>
       </div>
     </div>
   </div>
 
+  <section class="rating-workspace">
+    <form class="rating-search-form" (ngSubmit)="searchMovies()">
+      <div class="search-input-wrap">
+        <i class="fas fa-search"></i>
+        <input
+          [(ngModel)]="searchQuery"
+          name="searchQuery"
+          type="text"
+          placeholder="Search a movie or series to rate"
+          autocomplete="off"
+        />
+      </div>
+      <button type="submit" class="btn-primary" [disabled]="searchLoading || !searchQuery.trim()">
+        <i class="fas fa-star"></i>
+        {{ searchLoading ? 'Searching' : 'Find title' }}
+      </button>
+    </form>
+
+    <p class="rating-feedback" *ngIf="feedbackMessage">{{ feedbackMessage }}</p>
+
+    <div class="search-results-grid" *ngIf="searchResults.length">
+      <article
+        class="search-result-card"
+        *ngFor="let movie of searchResults; trackBy: trackByMovie"
+        [class.selected]="selectedMovie?.id === movie.id">
+        <img [src]="movie.poster_path | posterUrl" [alt]="getTitle(movie)">
+        <div class="result-info">
+          <div class="result-kicker">
+            <span>{{ getMediaLabel(movie) }}</span>
+            <span *ngIf="getReleaseDate(movie)">{{ getReleaseDate(movie) | date:'yyyy' }}</span>
+            <span *ngIf="movie.vote_average">
+              <i class="fas fa-star"></i>
+              {{ movie.vote_average | number:'1.1-1' }}
+            </span>
+          </div>
+          <h3>{{ getTitle(movie) }}</h3>
+          <p *ngIf="movie.overview">{{ movie.overview }}</p>
+          <div class="result-actions">
+            <button type="button" class="btn-secondary compact" (click)="selectMovie(movie)">
+              <i class="fas fa-check"></i>
+              Select
+            </button>
+            <div class="rating-editor compact-rating" role="radiogroup" [attr.aria-label]="'Rate ' + getTitle(movie)">
+              <button
+                type="button"
+                class="star-button"
+                *ngFor="let star of stars"
+                [class.active]="star <= getRating(movie)"
+                [attr.aria-label]="star + ' out of 5'"
+                (click)="rateMovie(movie, star)">
+                <i class="fas fa-star"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="selected-rating-panel" *ngIf="selectedMovie">
+      <img [src]="selectedMovie.poster_path | posterUrl" [alt]="getTitle(selectedMovie)">
+      <div class="selected-info">
+        <div class="result-kicker">
+          <span>{{ getMediaLabel(selectedMovie) }}</span>
+          <span *ngIf="getReleaseDate(selectedMovie)">{{ getReleaseDate(selectedMovie) | date:'yyyy' }}</span>
+        </div>
+        <h2>{{ getTitle(selectedMovie) }}</h2>
+        <p>
+          {{ getRating(selectedMovie) ? 'Your rating is ' + getRating(selectedMovie) + '/5. Change it whenever you want.' : 'Choose your rating.' }}
+        </p>
+        <div class="rating-editor" role="radiogroup" [attr.aria-label]="'Rate ' + getTitle(selectedMovie)">
+          <button
+            type="button"
+            class="star-button large"
+            *ngFor="let star of stars"
+            [class.active]="star <= getRating(selectedMovie)"
+            [attr.aria-label]="star + ' out of 5'"
+            (click)="rateMovie(selectedMovie, star)">
+            <i class="fas fa-star"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <div class="rated-grid" *ngIf="ratedMovies.length; else noRated">
-    <div class="rated-card" *ngFor="let item of ratedMovies">
+    <div class="rated-card" *ngFor="let item of ratedMovies; trackBy: trackByMovie">
       <div class="card-poster">
-        <img [src]="item.movie.poster_path | posterUrl" [alt]="item.movie.title">
+        <img [src]="item.movie.poster_path | posterUrl" [alt]="getTitle(item.movie)">
         <div class="card-gradient"></div>
         <div class="your-rating-badge">
           <div class="rating-stars">
-            <i class="fas fa-star" *ngFor="let star of [1,2,3,4,5]" 
-               [class.filled]="star <= item.rating"></i>
+            <i class="fas fa-star" *ngFor="let star of stars" [class.filled]="star <= item.rating"></i>
           </div>
           <span class="rating-number">{{ item.rating }}/5</span>
         </div>
       </div>
       <div class="card-content">
-        <h3 class="card-title">{{ item.movie.title }}</h3>
+        <h3 class="card-title">{{ getTitle(item.movie) }}</h3>
         <div class="card-meta">
-          <span class="year">{{ item.movie.release_date | date:'yyyy' }}</span>
-          <span class="dot">•</span>
+          <span>{{ getMediaLabel(item.movie) }}</span>
+          <span class="dot">&bull;</span>
+          <span class="year" *ngIf="getReleaseDate(item.movie)">{{ getReleaseDate(item.movie) | date:'yyyy' }}</span>
+          <span class="dot" *ngIf="getReleaseDate(item.movie)">&bull;</span>
           <span class="tmdb-rating">
             <i class="fas fa-star"></i>
             {{ item.movie.vote_average | number:'1.1-1' }}
           </span>
+        </div>
+        <div class="card-rating-editor">
+          <span>Change rating</span>
+          <div class="rating-editor compact-rating" role="radiogroup" [attr.aria-label]="'Change rating for ' + getTitle(item.movie)">
+            <button
+              type="button"
+              class="star-button"
+              *ngFor="let star of stars"
+              [class.active]="star <= item.rating"
+              [attr.aria-label]="star + ' out of 5'"
+              (click)="rateMovie(item.movie, star)">
+              <i class="fas fa-star"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button type="button" class="btn-secondary compact" (click)="selectMovie(item.movie)">
+            <i class="fas fa-pen"></i>
+            Edit
+          </button>
+          <button type="button" class="btn-secondary compact" (click)="watchMedia(item.movie)">
+            <i class="fas fa-play"></i>
+            Watch
+          </button>
+          <button type="button" class="btn-danger compact" (click)="removeRating(item.movie)">
+            <i class="fas fa-trash"></i>
+            Remove
+          </button>
         </div>
       </div>
     </div>
@@ -47,8 +160,8 @@
         <i class="far fa-star"></i>
       </div>
       <h3>No ratings yet</h3>
-      <p>Start rating movies to build your personal collection</p>
-      <button class="browse-btn" routerLink="/">
+      <p>Search above, select a title, and choose your stars.</p>
+      <button type="button" class="browse-btn" routerLink="/">
         <i class="fas fa-search"></i>
         Discover Movies
       </button>

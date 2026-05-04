@@ -120,6 +120,21 @@ export class StorageService {
     this.set('currentUser', user);
   }
 
+  setMovieRating(movie: any, rating: number): void {
+    if (!movie || movie.id == null) return;
+
+    const ratings = this.get<{ [key: number]: number }>('ratings') || {};
+
+    if (rating > 0) {
+      ratings[movie.id] = rating;
+      this.saveMovie(movie);
+    } else {
+      delete ratings[movie.id];
+    }
+
+    this.set('ratings', ratings);
+  }
+
   addMovieToList(listId: string, movie: any): void {
     if (!movie || movie.id == null) return;
 
@@ -177,7 +192,9 @@ export class StorageService {
     }
   }
 
-  private saveMovie(movie: any): void {
+  saveMovie(movie: any): void {
+    if (!movie || movie.id == null) return;
+
     const movies = this.getMovies();
     const index = movies.findIndex((m: any) => m.id === movie.id);
     if (index >= 0) {

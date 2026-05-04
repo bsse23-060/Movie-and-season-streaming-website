@@ -66,9 +66,7 @@ export class MovieDetailComponent implements OnInit {
   }
 
   onChangeRating(rating:number){
-    const ratings = this.storage.get<{[key : number] : number}>('ratings') || {};
-    ratings[this.movie.id] = rating;
-    this.storage.set('ratings', ratings);
+    this.storage.setMovieRating(this.movie, rating);
     this.userRating = rating;
   }
 
