@@ -446,25 +446,44 @@ export class MovieSearchComponent implements OnDestroy {
     const newList = {
       id: this.newListTitle.trim().toLowerCase().replace(/\s+/g, '-'),
       title: this.newListTitle.trim(),
-      movies: this.selectedMovieId ? [this.selectedMovieId] : [],
+      movies: [],
       created: new Date(),
       updated: new Date(),
       isPublic: false,
       userId: 'me'
     };
-    this.storage.addList(newList);
-    this.storage.addMovieToList(newList.id, this.selectedMovieObj);
+    const savedList = this.storage.addList(newList);
+    this.storage.addMovieToList(savedList.id, this.selectedMovieObj);
     this.userLists = this.storage.getLists();
-    this.selectedListIds.push(newList.id);
+    this.selectedListIds = [savedList.id];
     this.newListTitle = '';
     alert('New list created and movie added!');
+    this.showListPrompt = false;
+    this.selectedMovieId = null;
+    this.selectedMovieObj = null;
+    this.selectedListIds = [];
   }
 
   cancelAddToList() {
     this.showListPrompt = false;
     this.selectedMovieId = null;
+    this.selectedMovieObj = null;
     this.selectedListIds = [];
     this.newListTitle = '';
+  }
+
+  isListSelected(listId: string): boolean {
+    return this.selectedListIds.includes(listId);
+  }
+
+  toggleSelectedList(listId: string, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    if (checked && !this.selectedListIds.includes(listId)) {
+      this.selectedListIds = [...this.selectedListIds, listId];
+    } else if (!checked) {
+      this.selectedListIds = this.selectedListIds.filter(id => id !== listId);
+    }
   }
 
   // Helper methods for template to access extended properties

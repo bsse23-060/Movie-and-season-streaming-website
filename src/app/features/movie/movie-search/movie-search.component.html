@@ -387,7 +387,7 @@
 
     <div *ngIf="userLists.length" style="margin-bottom:1rem; display:flex; flex-direction:column; gap:0.5rem;">
       <label *ngFor="let list of userLists" style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
-        <input type="checkbox" [value]="list.id" [(ngModel)]="selectedListIds">
+        <input type="checkbox" [checked]="isListSelected(list.id)" (change)="toggleSelectedList(list.id, $event)">
         {{ list.title }}
       </label>
     </div>
@@ -398,8 +398,8 @@
     </div>
 
     <div style="display:flex; gap:1rem;">
-      <button class="btn-primary" (click)="userLists.length && !newListTitle ? confirmAddToList() : addNewListInline()">
-        {{ newListTitle ? 'Create & Add' : 'Add to Selected' }}
+      <button class="btn-primary" [disabled]="!newListTitle.trim() && selectedListIds.length === 0" (click)="newListTitle.trim() ? addNewListInline() : confirmAddToList()">
+        {{ newListTitle.trim() ? 'Create & Add' : 'Add to Selected' }}
       </button>
       <button class="btn-secondary" style="border-radius:8px; width:auto; padding:0 1rem;"
         (click)="cancelAddToList()">Cancel</button>

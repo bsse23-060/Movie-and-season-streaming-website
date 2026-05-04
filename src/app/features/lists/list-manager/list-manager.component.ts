@@ -1,7 +1,7 @@
 
 
 
-import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -19,6 +19,10 @@ export class ListManagerComponent implements OnInit {
   lists: MovieList[] = [];
   newListId = '';
   newListTitle = '';
+  statusMessage = '';
+
+  @ViewChild('titleInput') titleInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('createSection') createSection?: ElementRef<HTMLElement>;
 
   constructor(
     private storage: StorageService,
@@ -49,20 +53,27 @@ export class ListManagerComponent implements OnInit {
   }
 
   addList() {
-    if (!this.newListId.trim() || !this.newListTitle.trim()) return;
+    const title = this.newListTitle.trim();
+    if (!title) {
+      this.statusMessage = 'Name the collection first.';
+      this.focusCreateForm();
+      return;
+    }
+
     const newList: MovieList = {
-      id: this.newListId,
-      title: this.newListTitle,
+      id: this.newListId.trim(),
+      title,
       movies: [],
       created: new Date(),
       updated: new Date(),
       isPublic: false,
       userId: 'me'
     };
-    this.storage.addList(newList);
+    const savedList = this.storage.addList(newList);
     this.lists = this.storage.getLists();
     this.newListId = '';
     this.newListTitle = '';
+    this.statusMessage = `${savedList.title} is ready.`;
   }
 
   getMoviePoster(movieId: number): string {
@@ -75,5 +86,15 @@ export class ListManagerComponent implements OnInit {
   deleteList(listId: string) {
     this.storage.deleteList(listId);
     this.lists = this.storage.getLists();
+    this.statusMessage = 'Collection deleted.';
+  }
+
+  focusCreateForm() {
+    this.createSection?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => this.titleInput?.nativeElement.focus(), 150);
+  }
+
+  getListMovieIds(list: MovieList): number[] {
+    return Array.isArray(list.movies) ? list.movies : [];
   }
 }

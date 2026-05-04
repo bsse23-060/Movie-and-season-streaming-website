@@ -56,6 +56,156 @@
   margin-bottom: var(--sp-8);
 }
 
+.collection-tools {
+  margin-bottom: var(--sp-10);
+}
+
+.collection-search-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sp-3);
+  align-items: center;
+  margin-bottom: var(--sp-3);
+}
+
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 52px;
+  padding: 0 var(--sp-4);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-md);
+}
+
+.search-input-wrap i {
+  color: var(--on-surface-variant);
+}
+
+.search-input-wrap input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--on-surface);
+  font: inherit;
+}
+
+.search-input-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.collection-feedback {
+  min-height: 22px;
+  color: var(--accent);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.search-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--sp-4);
+  margin-top: var(--sp-5);
+}
+
+.search-result-card {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: var(--sp-4);
+  min-height: 150px;
+  padding: var(--sp-3);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--outline);
+  border-radius: var(--radius-md);
+}
+
+.search-result-card img {
+  width: 92px;
+  height: 138px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--surface-3);
+}
+
+.result-info {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.result-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  color: var(--on-surface-variant);
+  font-size: var(--text-xs);
+}
+
+.result-info h3 {
+  color: var(--on-surface);
+  font-size: var(--text-base);
+  line-height: 1.25;
+}
+
+.result-info p {
+  display: -webkit-box;
+  color: var(--on-surface-variant);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.result-actions,
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: auto;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 42px;
+  padding: var(--sp-3) var(--sp-5);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: all var(--duration-base) var(--ease-out);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px var(--accent-glow);
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.compact {
+  min-height: 34px;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+}
+
 .btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -132,6 +282,7 @@
 
 .card-meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--sp-3);
   font-size: var(--text-sm);
@@ -143,6 +294,11 @@
 }
 
 .btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 34px;
   padding: var(--sp-2) var(--sp-3);
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
@@ -195,4 +351,33 @@
 .empty-state p {
   font-size: var(--text-base);
   color: var(--on-surface-variant);
+}
+
+@media (max-width: 720px) {
+  .list-detail-container {
+    padding-inline: var(--sp-4);
+  }
+
+  .list-header,
+  .collection-search-form {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .list-title {
+    font-size: var(--text-3xl);
+  }
+
+  .search-results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .search-result-card {
+    grid-template-columns: 78px minmax(0, 1fr);
+  }
+
+  .search-result-card img {
+    width: 78px;
+    height: 117px;
+  }
 }

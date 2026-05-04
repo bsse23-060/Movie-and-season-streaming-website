@@ -17,6 +17,7 @@ export const routes: Routes = [
   { path: 'search', component: MovieSearchComponent },
   { path: 'shows', component: MovieSearchComponent },
   { path: 'movie/:id', component: MovieDetailComponent },
+  { path: 'library', redirectTo: '/lists', pathMatch: 'full' },
   { path: 'lists', component: ListManagerComponent },
   { path: 'favorites', component: FavoritesComponent },
   { path: 'list/:id', component: ListDetailComponent },

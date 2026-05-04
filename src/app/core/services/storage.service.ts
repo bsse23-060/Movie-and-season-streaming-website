@@ -36,10 +36,23 @@ export class StorageService {
     return this.get<any[]>('lists') || [];
   }
 
-  addList(list: any): void {
+  addList(list: any): any {
     const lists = this.getLists();
-    lists.push(list);
+    const baseId = this.toListId(list?.id || list?.title || 'collection');
+    const savedList = {
+      ...list,
+      id: this.getAvailableListId(baseId, lists),
+      title: (list?.title || this.titleFromId(baseId)).trim(),
+      movies: Array.from(new Set(Array.isArray(list?.movies) ? list.movies : [])),
+      created: list?.created || new Date(),
+      updated: new Date(),
+      isPublic: Boolean(list?.isPublic),
+      userId: list?.userId || 'me'
+    };
+
+    lists.push(savedList);
     this.set('lists', lists);
+    return savedList;
   }
 
   deleteList(listId: string): void {
@@ -59,7 +72,9 @@ export class StorageService {
 
   getMoviesByIds(ids: number[]): any[] {
     const movies = this.getMovies();
-    return movies.filter(m => ids.includes(m.id));
+    return ids
+      .map(id => movies.find(m => m.id === id))
+      .filter(Boolean);
   }
 
   // --- User Management ---
@@ -84,18 +99,18 @@ export class StorageService {
   }
 
   addMovieToFavorites(movie: any): void {
+    const movieObj = typeof movie === 'number'
+      ? this.getMovies().find((m: any) => m.id === movie)
+      : movie;
+    if (!movieObj || movieObj.id == null) return;
+
     const user = this.getCurrentUser();
     if (!user) return;
-    if (!user.favoriteMovieIds.includes(movie.id)) {
-      user.favoriteMovieIds.push(movie.id);
+    if (!user.favoriteMovieIds.includes(movieObj.id)) {
+      user.favoriteMovieIds.push(movieObj.id);
       this.set('currentUser', user);
     }
-    // Ensure the movie is saved in movies array
-    const movies = this.getMovies();
-    if (!movies.some((m: any) => m.id === movie.id)) {
-      movies.push(movie);
-      this.set('movies', movies);
-    }
+    this.saveMovie(movieObj);
   }
 
   removeMovieFromFavorites(movieId: number): void {
@@ -106,13 +121,14 @@ export class StorageService {
   }
 
   addMovieToList(listId: string, movie: any): void {
+    if (!movie || movie.id == null) return;
+
     const lists = this.getLists();
     let list = lists.find(l => l.id === listId);
     if (!list) {
-      // Optionally create the list if it doesn't exist
       list = {
         id: listId,
-        title: listId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        title: this.titleFromId(listId),
         movies: [],
         created: new Date(),
         updated: new Date(),
@@ -121,16 +137,15 @@ export class StorageService {
       };
       lists.push(list);
     }
+    if (!Array.isArray(list.movies)) {
+      list.movies = [];
+    }
     if (!list.movies.includes(movie.id)) {
       list.movies.push(movie.id);
+      list.updated = new Date();
       this.set('lists', lists);
     }
-    // Ensure the movie is saved in movies array
-    const movies = this.getMovies();
-    if (!movies.some((m: any) => m.id === movie.id)) {
-      movies.push(movie);
-      this.set('movies', movies);
-    }
+    this.saveMovie(movie);
   }
 
   ensureWatchedList(): any {
@@ -157,8 +172,46 @@ export class StorageService {
     const list = lists.find(l => l.id === listId);
     if (list) {
       list.movies = list.movies.filter((id: number) => id !== movieId);
+      list.updated = new Date();
       this.set('lists', lists);
     }
+  }
+
+  private saveMovie(movie: any): void {
+    const movies = this.getMovies();
+    const index = movies.findIndex((m: any) => m.id === movie.id);
+    if (index >= 0) {
+      movies[index] = { ...movies[index], ...movie };
+    } else {
+      movies.push(movie);
+    }
+    this.set('movies', movies);
+  }
+
+  private toListId(value: string): string {
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'collection';
+  }
+
+  private getAvailableListId(baseId: string, lists: any[]): string {
+    let candidate = baseId;
+    let suffix = 2;
+
+    while (lists.some(list => list.id === candidate)) {
+      candidate = `${baseId}-${suffix}`;
+      suffix += 1;
+    }
+
+    return candidate;
+  }
+
+  private titleFromId(listId: string): string {
+    return listId
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, char => char.toUpperCase());
   }
 
 }

@@ -680,9 +680,9 @@ export class MoviePlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       userId: 'me'
     };
 
-    this.storage.addList(newList);
+    const savedList = this.storage.addList(newList);
     this.userLists = this.storage.getLists();
-    this.selectedListIds.push(newList.id);
+    this.selectedListIds.push(savedList.id);
     this.newListTitle = '';
     this.showNewListForm = false;
   }

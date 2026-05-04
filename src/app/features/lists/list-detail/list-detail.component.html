@@ -9,32 +9,92 @@
         </span>
       </div>
     </div>
-    <button class="btn-secondary" routerLink="/lists">
+    <button type="button" class="btn-secondary" routerLink="/lists">
       <i class="fas fa-arrow-left"></i>
-      Back to Lists
+      Back to Library
     </button>
   </div>
   
   <p class="list-description" *ngIf="list.description">{{ list.description }}</p>
 
+  <section class="collection-tools">
+    <form class="collection-search-form" (ngSubmit)="searchCollection()">
+      <div class="search-input-wrap">
+        <i class="fas fa-search"></i>
+        <input
+          [(ngModel)]="searchQuery"
+          name="searchQuery"
+          type="text"
+          placeholder="Search movies or seasons"
+          autocomplete="off"
+        />
+      </div>
+      <button type="submit" class="btn-primary" [disabled]="searchLoading || !searchQuery.trim()">
+        <i class="fas fa-plus"></i>
+        {{ searchLoading ? 'Searching' : 'Find titles' }}
+      </button>
+    </form>
+
+    <p class="collection-feedback" *ngIf="feedbackMessage">{{ feedbackMessage }}</p>
+
+    <div class="search-results-grid" *ngIf="searchResults.length > 0">
+      <article class="search-result-card" *ngFor="let movie of searchResults; trackBy: trackByMovie">
+        <img [src]="getPosterUrl(movie.poster_path)" [alt]="getTitle(movie)">
+        <div class="result-info">
+          <div class="result-kicker">
+            <span>{{ getMediaLabel(movie) }}</span>
+            <span *ngIf="getReleaseDate(movie)">{{ getReleaseDate(movie) | date:'yyyy' }}</span>
+            <span *ngIf="movie.vote_average">
+              <i class="fas fa-star text-accent"></i>
+              {{ movie.vote_average | number:'1.1-1' }}
+            </span>
+          </div>
+          <h3>{{ getTitle(movie) }}</h3>
+          <p *ngIf="movie.overview">{{ movie.overview }}</p>
+          <div class="result-actions">
+            <button type="button" class="btn-primary compact" [disabled]="isInList(movie)" (click)="addMovieToCollection(movie)">
+              <i class="fas" [class.fa-check]="isInList(movie)" [class.fa-plus]="!isInList(movie)"></i>
+              {{ isInList(movie) ? 'Added' : 'Add' }}
+            </button>
+            <button type="button" class="btn-secondary compact" (click)="watchMedia(movie)">
+              <i class="fas fa-play"></i>
+              Watch
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
   <div class="movies-grid" *ngIf="movies.length > 0; else emptyList">
-    <div class="movie-card" *ngFor="let movie of movies">
+    <div class="movie-card" *ngFor="let movie of movies; trackBy: trackByMovie">
       <div class="poster-container">
-        <img [src]="getPosterUrl(movie.poster_path)" [alt]="movie.title">
+        <img [src]="getPosterUrl(movie.poster_path)" [alt]="getTitle(movie)">
       </div>
       <div class="card-info">
-        <div class="card-title">{{ movie.title }}</div>
+        <div class="card-title">{{ getTitle(movie) }}</div>
         <div class="card-meta">
-          <span>{{ movie.release_date | date:'yyyy' }}</span>
+          <span>{{ getMediaLabel(movie) }}</span>
+          <span *ngIf="getReleaseDate(movie)">{{ getReleaseDate(movie) | date:'yyyy' }}</span>
           <span class="rating">
             <i class="fas fa-star text-accent"></i>
             {{ movie.vote_average | number:'1.1-1' }}
           </span>
         </div>
-        <button class="btn-danger" (click)="removeFromList(movie.id)">
-          <i class="fas fa-trash-alt"></i>
-          Remove
-        </button>
+        <div class="card-actions">
+          <button type="button" class="btn-secondary compact" (click)="watchMedia(movie)">
+            <i class="fas fa-play"></i>
+            Watch
+          </button>
+          <button type="button" class="btn-secondary compact" (click)="addToFavorites(movie)">
+            <i class="fas fa-heart"></i>
+            Favorite
+          </button>
+          <button type="button" class="btn-danger" (click)="removeFromList(movie.id)">
+            <i class="fas fa-trash-alt"></i>
+            Remove
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -56,8 +116,8 @@
   </div>
   <h3>List not found</h3>
   <p>The list you're looking for doesn't exist</p>
-  <button class="btn-secondary" routerLink="/lists">
+  <button type="button" class="btn-secondary" routerLink="/lists">
     <i class="fas fa-arrow-left"></i>
-    Back to Lists
+    Back to Library
   </button>
 </div>
