@@ -37,7 +37,7 @@ https://bsse23-060.github.io/Movie-and-season-streaming-website/search
 - **Favorites** - Save your favorite movies and shows
 - **Ratings** - Rate movies and track what you've watched
 - **Watch Progress** - Resume where you left off
-- **Visitor Counter** - Track unique visits and show the live count in the footer
+- **Visitor Counter** - Track global visits and show the live count in the footer
 
 ### 🎨 Modern Design
 - **Dark Theme** - Sleek, Netflix-inspired dark interface
@@ -48,7 +48,7 @@ https://bsse23-060.github.io/Movie-and-season-streaming-website/search
 ### 🔒 Privacy-First
 - **No Accounts Required** - Start using immediately
 - **Local Storage Only** - All data stays on your device
-- **Lightweight Visitor Count** - Uses one first-party visit flag only for the total counter
+- **Lightweight Visitor Count** - Counts site entries without accounts or profiles
 - **Full Control** - Clear your data anytime
 
 ---
@@ -168,12 +168,12 @@ PopAuraStream is fully optimized for mobile devices:
 | Icons | Font Awesome 6 |
 | API | TMDB (The Movie Database) |
 | Assistant | TMDB-powered AuraBot critic engine, optional Gemini 2.5 Pro worker |
-| Visitor Count | Express API with cookie/local fallback |
+| Visitor Count | CounterAPI on GitHub Pages, Express/local fallback |
 | Hosting | GitHub Pages / Node SSR |
 
 ### Visitor Counter
 
-The footer reads from `/api/visitors` when the Node SSR server is running. The endpoint stores the total in `visitor-count.json` and uses a first-party cookie so each browser is counted once. On GitHub Pages, the app falls back to a hosted visitor-counter API so the deployed static site can still show a shared total.
+The footer increments a shared CounterAPI counter on GitHub Pages so repeat entries and new visitors both move the global total. When the Node SSR server is running, `/api/visitors` stores the running total in `visitor-count.json`. Local fallback also increments per app entry.
 
 ---
 

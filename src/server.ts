@@ -16,18 +16,6 @@ const app = express();
 const angularApp = new AngularNodeAppEngine();
 const visitorCountFile = resolve(process.cwd(), 'visitor-count.json');
 
-const parseCookies = (cookieHeader = ''): Record<string, string> => {
-  return cookieHeader.split(';').reduce((cookies: Record<string, string>, cookie) => {
-    const [name, ...rest] = cookie.split('=');
-    const value = rest.join('=');
-    if (!name || !value) {
-      return cookies;
-    }
-    cookies[name.trim()] = decodeURIComponent(value.trim());
-    return cookies;
-  }, {});
-};
-
 const readVisitorCount = async (): Promise<number> => {
   try {
     const data = await fs.readFile(visitorCountFile, 'utf8');
@@ -46,19 +34,9 @@ app.use(express.json());
 
 app.get('/api/visitors', async (req, res) => {
   try {
-    const cookies = parseCookies(req.headers.cookie ?? '');
     let count = await readVisitorCount();
-    const isNewVisitor = cookies['popaurastream_visitor_seen'] !== 'true';
-
-    if (isNewVisitor) {
-      count += 1;
-      await writeVisitorCount(count);
-      res.cookie('popaurastream_visitor_seen', 'true', {
-        maxAge: 365 * 24 * 60 * 60 * 1000,
-        httpOnly: false,
-        sameSite: 'lax',
-      });
-    }
+    count += 1;
+    await writeVisitorCount(count);
 
     return res.json({ visitors: count });
   } catch (error) {

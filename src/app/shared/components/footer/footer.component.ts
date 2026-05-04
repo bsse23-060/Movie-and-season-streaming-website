@@ -21,7 +21,7 @@ export class FooterComponent implements OnInit {
     this.visitorService.getVisitorCount().subscribe({
       next: (count) => {
         this.visitorCount = count;
-        this.visitorStatus = 'Total visitors tracked';
+        this.visitorStatus = 'Global visits tracked';
       },
       error: () => {
         this.visitorStatus = 'Unable to load visitor count';

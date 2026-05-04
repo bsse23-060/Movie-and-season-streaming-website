@@ -2,6 +2,7 @@ import { Component, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { MovieService } from '../movie.service';
 import { Movie } from '../../../core/models/movie.model';
 import { StorageService } from '../../../core/services/storage.service';
@@ -90,9 +91,58 @@ export class MovieSearchComponent implements OnDestroy {
   }
 
   loadRecommendedContent() {
-    // Fetch popular movies
-    this.movieService.getPopularMovies(1).subscribe((res: any) => {
-      this.recommendedMovies = (res.results || []).slice(0, 20).map((r: any) => ({
+    const shouldShowHomeLoading = !this.query.trim();
+    if (shouldShowHomeLoading) {
+      this.loading = true;
+    }
+
+    forkJoin({
+      popularMovies: this.movieService.getPopularMovies(this.getRandomPage(8)),
+      popularShows: this.movieService.getPopularTv(this.getRandomPage(8)),
+      anime: this.movieService.getPopularAnime(this.getRandomPage(6)),
+      action: this.movieService.discoverMoviesByGenre(28, this.getRandomPage(8)),
+      topRated: this.movieService.getTopRatedMovies(this.getRandomPage(10)),
+      nowPlaying: this.movieService.getNowPlayingMovies(this.getRandomPage(3)),
+      thrillers: this.movieService.discoverMoviesByGenre(53, this.getRandomPage(8))
+    }).subscribe({
+      next: (responses: any) => {
+        this.recommendedMovies = this.mapAndShuffleMedia(responses.popularMovies, 'movie', 20);
+        this.recommendedShows = this.mapAndShuffleMedia(responses.popularShows, 'tv', 20);
+        this.recommendedAnime = this.mapAndShuffleMedia(responses.anime, 'tv', 20);
+        this.actionMovies = this.mapAndShuffleMedia(responses.action, 'movie', 15);
+        this.topRatedMovies = this.mapAndShuffleMedia(responses.topRated, 'movie', 15);
+        this.nowPlayingMovies = this.mapAndShuffleMedia(responses.nowPlaying, 'movie', 15);
+        this.thrillerMovies = this.mapAndShuffleMedia(responses.thrillers, 'movie', 15);
+
+        this.featuredMovie = this.recommendedMovies[0] ?? null;
+        this.allContent = this.shuffleItems([
+          ...this.recommendedMovies.slice(0, 10),
+          ...this.recommendedShows.slice(0, 8),
+          ...this.recommendedAnime.slice(0, 7)
+        ]);
+
+        this.checkFeaturedFavoriteStatus();
+        if (shouldShowHomeLoading) {
+          this.loading = false;
+        }
+      },
+      error: (error) => {
+        console.error('Error loading recommendations:', error);
+        if (shouldShowHomeLoading) {
+          this.loading = false;
+        }
+      }
+    });
+  }
+
+  private getRandomPage(maxPage: number): number {
+    return Math.floor(Math.random() * maxPage) + 1;
+  }
+
+  private mapAndShuffleMedia(response: any, mediaType: 'movie' | 'tv', limit: number): Movie[] {
+    const mapped: Movie[] = (response?.results || [])
+      .filter((r: any) => r.poster_path || r.backdrop_path)
+      .map((r: any) => ({
         id: r.id,
         title: r.title ?? r.name,
         name: r.name,
@@ -102,113 +152,21 @@ export class MovieSearchComponent implements OnDestroy {
         first_air_date: r.first_air_date,
         vote_average: r.vote_average ?? 0,
         overview: r.overview ?? '',
-        media_type: 'movie'
+        media_type: mediaType
       } as Movie));
 
-      if (this.recommendedMovies.length > 0) {
-        this.featuredMovie = this.recommendedMovies[0];
-        this.checkFeaturedFavoriteStatus();
-      }
-    });
+    return this.shuffleItems(mapped).slice(0, limit);
+  }
 
-    // Fetch popular TV shows
-    this.movieService.getPopularTv(1).subscribe((res: any) => {
-      this.recommendedShows = (res.results || []).slice(0, 20).map((r: any) => ({
-        id: r.id,
-        title: r.name ?? r.title,
-        name: r.name,
-        poster_path: r.poster_path ?? null,
-        backdrop_path: r.backdrop_path ?? null,
-        release_date: r.first_air_date ?? r.release_date ?? '',
-        first_air_date: r.first_air_date,
-        vote_average: r.vote_average ?? 0,
-        overview: r.overview ?? '',
-        media_type: 'tv'
-      } as Movie));
-    });
+  private shuffleItems<T>(items: T[]): T[] {
+    const shuffled = [...items];
 
-    // Fetch popular anime
-    this.movieService.getPopularAnime(1).subscribe((res: any) => {
-      this.recommendedAnime = (res.results || []).slice(0, 20).map((r: any) => ({
-        id: r.id,
-        title: r.name ?? r.title,
-        name: r.name,
-        poster_path: r.poster_path ?? null,
-        backdrop_path: r.backdrop_path ?? null,
-        release_date: r.first_air_date ?? r.release_date ?? '',
-        first_air_date: r.first_air_date,
-        vote_average: r.vote_average ?? 0,
-        overview: r.overview ?? '',
-        media_type: 'tv' as any
-      } as Movie));
+    for (let index = shuffled.length - 1; index > 0; index--) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    }
 
-      // Combine all content for unified slider
-      this.allContent = [
-        ...this.recommendedMovies.slice(0, 10),
-        ...this.recommendedShows.slice(0, 8),
-        ...this.recommendedAnime.slice(0, 7)
-      ];
-    });
-
-    // Fetch Action Movies (genre 28)
-    this.movieService.discoverMoviesByGenre(28, 1).subscribe((res: any) => {
-      this.actionMovies = (res.results || []).slice(0, 15).map((r: any) => ({
-        id: r.id,
-        title: r.title ?? r.name,
-        name: r.name,
-        poster_path: r.poster_path ?? null,
-        backdrop_path: r.backdrop_path ?? null,
-        release_date: r.release_date ?? '',
-        vote_average: r.vote_average ?? 0,
-        overview: r.overview ?? '',
-        media_type: 'movie'
-      } as Movie));
-    });
-
-    // Fetch Top Rated Movies
-    this.movieService.getTopRatedMovies(1).subscribe((res: any) => {
-      this.topRatedMovies = (res.results || []).slice(0, 15).map((r: any) => ({
-        id: r.id,
-        title: r.title ?? r.name,
-        name: r.name,
-        poster_path: r.poster_path ?? null,
-        backdrop_path: r.backdrop_path ?? null,
-        release_date: r.release_date ?? '',
-        vote_average: r.vote_average ?? 0,
-        overview: r.overview ?? '',
-        media_type: 'movie'
-      } as Movie));
-    });
-
-    // Fetch Now Playing Movies
-    this.movieService.getNowPlayingMovies(1).subscribe((res: any) => {
-      this.nowPlayingMovies = (res.results || []).slice(0, 15).map((r: any) => ({
-        id: r.id,
-        title: r.title ?? r.name,
-        name: r.name,
-        poster_path: r.poster_path ?? null,
-        backdrop_path: r.backdrop_path ?? null,
-        release_date: r.release_date ?? '',
-        vote_average: r.vote_average ?? 0,
-        overview: r.overview ?? '',
-        media_type: 'movie'
-      } as Movie));
-    });
-
-    // Fetch Thriller Movies (genre 53)
-    this.movieService.discoverMoviesByGenre(53, 1).subscribe((res: any) => {
-      this.thrillerMovies = (res.results || []).slice(0, 15).map((r: any) => ({
-        id: r.id,
-        title: r.title ?? r.name,
-        name: r.name,
-        poster_path: r.poster_path ?? null,
-        backdrop_path: r.backdrop_path ?? null,
-        release_date: r.release_date ?? '',
-        vote_average: r.vote_average ?? 0,
-        overview: r.overview ?? '',
-        media_type: 'movie'
-      } as Movie));
-    });
+    return shuffled;
   }
 
   // Removed slider interval methods as we use CSS scrolling now

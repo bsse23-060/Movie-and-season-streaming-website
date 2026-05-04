@@ -7,26 +7,37 @@ interface HostedVisitorResponse {
   todayCount?: number;
 }
 
+interface CounterApiResponse {
+  count?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class VisitorService {
   private http = inject(HttpClient);
-  private readonly hostedCounterUrl = 'https://visitor.6developer.com/visit';
+  private readonly globalCounterUrl = 'https://api.counterapi.dev/v1/popaurastream/website-visits/up';
   private readonly productionDomain = 'popaurastream.app';
-  private readonly visitorCookie = 'popaurastream_visitor_seen';
-  private readonly localCountKey = 'popaurastream_local_visitor_count';
+  private readonly legacyHostedCounterUrl = 'https://visitor.6developer.com/visit';
+  private readonly localCountKey = 'popaurastream_local_visit_count';
 
   getVisitorCount(): Observable<number> {
+    if (this.shouldUseGlobalCounter()) {
+      return this.getGlobalVisitorCount();
+    }
+
     return this.http.get<{ visitors: number }>('/api/visitors').pipe(
       map((result) => result?.visitors ?? this.getLocalVisitorCount()),
-      catchError(() => this.getHostedVisitorCount()),
+      catchError(() => of(this.getLocalVisitorCount())),
     );
   }
 
-  private getHostedVisitorCount(): Observable<number> {
-    if (!this.shouldUseHostedCounter()) {
-      return of(this.getLocalVisitorCount());
-    }
+  private getGlobalVisitorCount(): Observable<number> {
+    return this.http.get<CounterApiResponse>(this.globalCounterUrl).pipe(
+      map((result) => result.count ?? this.getLocalVisitorCount()),
+      catchError(() => this.getLegacyHostedVisitorCount()),
+    );
+  }
 
+  private getLegacyHostedVisitorCount(): Observable<number> {
     const body = {
       domain: this.productionDomain,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -35,13 +46,13 @@ export class VisitorService {
       referrer: document.referrer,
     };
 
-    return this.http.post<HostedVisitorResponse>(this.hostedCounterUrl, body).pipe(
+    return this.http.post<HostedVisitorResponse>(this.legacyHostedCounterUrl, body).pipe(
       map((result) => result.totalCount ?? this.getLocalVisitorCount()),
       catchError(() => of(this.getLocalVisitorCount())),
     );
   }
 
-  private shouldUseHostedCounter(): boolean {
+  private shouldUseGlobalCounter(): boolean {
     if (typeof window === 'undefined') {
       return false;
     }
@@ -55,15 +66,11 @@ export class VisitorService {
       return 0;
     }
 
-    const hasVisited = localStorage.getItem(this.visitorCookie) === 'true';
     let count = Number.parseInt(localStorage.getItem(this.localCountKey) ?? '0', 10);
     count = Number.isFinite(count) ? count : 0;
+    count += 1;
 
-    if (!hasVisited) {
-      count += 1;
-      localStorage.setItem(this.localCountKey, count.toString());
-      localStorage.setItem(this.visitorCookie, 'true');
-    }
+    localStorage.setItem(this.localCountKey, count.toString());
 
     return count;
   }
