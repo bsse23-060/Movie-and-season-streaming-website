@@ -2,7 +2,9 @@
 
 This folder contains an optional Cloudflare Worker template that can proxy requests to the Gemini API.
 
-The deployed PopAuraStream GitHub Pages site does not require this worker. AuraBot currently works directly in the Angular app with TMDB-powered recommendations and lookups.
+The deployed PopAuraStream GitHub Pages site does not require this worker. AuraBot currently works directly in the Angular app with TMDB-powered critic-style recommendations, comparisons, and lookups.
+
+The worker template uses `gemini-2.5-pro` for stronger comparison and critic-style reasoning when you choose to connect a private API key through Cloudflare.
 
 ## Deployment Instructions
 
@@ -42,11 +44,10 @@ The deployed PopAuraStream GitHub Pages site does not require this worker. AuraB
 
 ## Configuration
 
-After deploying, you would need to wire your Angular app back to the worker endpoint if you want Gemini-powered responses:
+After deploying, paste your worker endpoint into `src/environments/environment.ts` if you want Gemini-powered responses:
 
 ```typescript
-// Example endpoint:
-// https://popaurastream-chatbot.<your-subdomain>.workers.dev
+chatbotWorkerUrl: 'https://popaurastream-chatbot.<your-subdomain>.workers.dev'
 ```
 
 ## Security Notes
@@ -64,7 +65,7 @@ Request body:
 {
   "systemPrompt": "You are AuraBot...",
   "messages": [
-    { "role": "user", "parts": [{ "text": "Recommend a movie" }] }
+    { "role": "user", "parts": [{ "text": "Compare Inception and Interstellar" }] }
   ]
 }
 ```
@@ -72,6 +73,6 @@ Request body:
 Response:
 ```json
 {
-  "response": "I'd recommend **The Shawshank Redemption**..."
+  "response": "**Verdict:** Interstellar wins for emotional scale..."
 }
 ```

@@ -27,9 +27,10 @@ https://bsse23-060.github.io/Movie-and-season-streaming-website/search
 
 ### 🤖 AuraBot AI Assistant
 - **Movie Recommendations** - Get personalized suggestions based on your mood or preferences
+- **Critic Comparisons** - Compare movies, series, shows, actors, and TMDB-searchable characters
 - **Cast & Crew Info** - Ask about actors, directors, and filmographies
 - **Movie Details** - Get quick info about any movie or TV show
-- **TMDB-powered assistant** - Fast recommendations and lookups that work on GitHub Pages
+- **Critic-style assistant** - TMDB-powered recommendations and comparisons that work on GitHub Pages
 
 ### 📚 Personal Library
 - **Custom Lists** - Create and manage custom movie lists
@@ -120,9 +121,9 @@ cloudflare-worker/               # Optional Cloudflare Worker template
 
 ## 🤖 AuraBot Setup
 
-AuraBot works directly from the deployed GitHub Pages app by using TMDB-powered recommendations and search responses.
+AuraBot works directly from the deployed GitHub Pages app by using TMDB-powered recommendations, comparisons, and critic-style search responses.
 
-The `cloudflare-worker/` folder is kept as an optional starting point if you later want to connect a Gemini API proxy.
+The `cloudflare-worker/` folder is kept as an optional starting point if you later want to connect a Gemini API proxy. The worker template is configured for `gemini-2.5-pro`.
 
 ### Optional Cloudflare Worker Template
 
@@ -166,7 +167,7 @@ PopAuraStream is fully optimized for mobile devices:
 | Fonts | Syncopate, Elm Sans |
 | Icons | Font Awesome 6 |
 | API | TMDB (The Movie Database) |
-| Assistant | TMDB-powered AuraBot |
+| Assistant | TMDB-powered AuraBot critic engine, optional Gemini 2.5 Pro worker |
 | Visitor Count | Express API with cookie/local fallback |
 | Hosting | GitHub Pages / Node SSR |
 
@@ -233,7 +234,7 @@ This project is licensed under the MIT License.
 
 <div align="center">
 
-Made with ❤️ by [bsse23094](https://github.com/bsse23-060)
+Made by **Saram Khan**
 
 ⭐ Star this repo if you find it useful!
 

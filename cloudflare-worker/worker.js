@@ -1,13 +1,22 @@
 /**
  * PopAuraStream Chatbot - Cloudflare Worker
- * Proxies requests to Gemini API for movie recommendations
+ * Proxies requests to Gemini API for critic-style recommendations and comparisons
  * 
  * IMPORTANT: The API key should be set as a secret in Cloudflare:
  * wrangler secret put GEMINI_API_KEY
  * Then enter your new API key when prompted
  */
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const GEMINI_MODEL = 'gemini-2.5-pro';
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+const DEFAULT_SYSTEM_PROMPT = [
+  'You are AuraBot, PopAuraStream\'s witty streaming critic.',
+  'Compare movies, series, shows, characters, and actors with clear verdicts, scorecards, and taste-aware recommendations.',
+  'Write like a sharp human critic: conversational, specific, playful, and a little cheeky.',
+  'Use harmless jokes about the query or watchlist energy, but never bully the user, use slurs, or attack protected traits.',
+  'Keep answers concise enough for a small chat window.'
+].join(' ');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -32,20 +41,25 @@ export default {
 
     try {
       const { systemPrompt, messages } = await request.json();
+      const prompt = systemPrompt || DEFAULT_SYSTEM_PROMPT;
+      const contents = Array.isArray(messages) && messages.length
+        ? messages.map((message) => ({
+          role: message.role === 'assistant' ? 'model' : 'user',
+          parts: message.parts?.length ? message.parts : [{ text: String(message.content || '') }]
+        }))
+        : [{ role: 'user', parts: [{ text: 'Recommend something good to watch.' }] }];
 
-      // Build the Gemini request - simplified format
+      // Build the Gemini request
       const geminiRequest = {
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: systemPrompt + "\n\nUser conversation:\n" + messages.map(m => `${m.role}: ${m.parts[0].text}`).join('\n') }]
-          }
-        ],
+        systemInstruction: {
+          parts: [{ text: prompt }]
+        },
+        contents,
         generationConfig: {
-          temperature: 0.8,
+          temperature: 0.9,
           topK: 40,
           topP: 0.95,
-          maxOutputTokens: 1024,
+          maxOutputTokens: 1536,
         }
       };
 
@@ -62,7 +76,7 @@ export default {
         return new Response(JSON.stringify({ 
           error: 'API error',
           details: data.error?.message || 'Unknown error',
-          response: "I'm having trouble connecting right now. Try searching for movies using the search bar above!"
+          response: "I'm having trouble connecting to the critic model right now. Try again in a minute, or use the search bar while I dramatically recover."
         }), {
           status: 200,
           headers: corsHeaders
@@ -83,7 +97,7 @@ export default {
       return new Response(JSON.stringify({ 
         error: 'Server error',
         details: error.message,
-        response: "Something went wrong. Please try again later!"
+        response: "Something went wrong. Please try again later. Even critics need intermission sometimes."
       }), {
         status: 200,
         headers: corsHeaders

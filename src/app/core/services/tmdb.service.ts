@@ -59,6 +59,13 @@ export class TMDBService {
     );
   }
 
+  // Get top-rated TV shows
+  getTopRatedTv(page = 1) {
+    return this.http.get(
+      `${environment.tmdbBaseUrl}/tv/top_rated?api_key=${environment.tmdbApiKey}&page=${page}`
+    );
+  }
+
   // Get popular anime (TV shows with animation genre from Japan)
   getPopularAnime(page = 1) {
     return this.http.get(
@@ -105,6 +112,13 @@ export class TMDBService {
   getPersonCredits(personId: number) {
     return this.http.get(
       `${environment.tmdbBaseUrl}/person/${personId}/combined_credits?api_key=${environment.tmdbApiKey}`
+    );
+  }
+
+  // Get person details with combined credits for critic-style comparisons
+  getPersonDetails(personId: number) {
+    return this.http.get(
+      `${environment.tmdbBaseUrl}/person/${personId}?api_key=${environment.tmdbApiKey}&append_to_response=combined_credits`
     );
   }
 }
