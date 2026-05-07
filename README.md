@@ -20,7 +20,7 @@ https://bsse23-060.github.io/Movie-and-season-streaming-website/search
 ## ✨ Features
 
 ### 🎥 Content Discovery
-- **Multi-source Search** - Search movies, TV shows, and anime from TMDB
+- **Multi-Source Search** - Search movies, TV shows, and anime from TMDB
 - **Detailed Information** - View cast, crew, ratings, reviews, and similar titles
 - **Category Browsing** - Browse popular movies, TV shows, and anime
 - **Smart Filtering** - Filter by genre, year, and rating
